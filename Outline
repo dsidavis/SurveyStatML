@@ -1,0 +1,220 @@
+Read chapter 3 ISLR
+ And 6, 7
+
+Check on
+  SVM regression
+  Random Forest boosting?
+
+
++  Machine Learning
+    + Stat Machine Learning Methods  are important, but are just one part of the data pipeline
+      Furthermore, if your (qualitative) conclusions are very different (i.e. very sensitive)
+      to the choice of method, you probably have a problem.   So we typically will use several 
+      methods and compare the results. In some cases, we will combine the results from multiple methods (ensembles).
+      So let's not get wedded to particular methods.
+
+    + Far too concerned with methods
+       + Understandable, but at expense of looking at data first and seeing the signal directly.
+         + Need to understand surprises from methods
+         + Should be no surprises.
+
+    + Most important is having a representative sample. If the sample is biased and does
+      not represent the population of inference, most inference is doomed.
+      
+    + Classification versus Prediction versus Estimation
+    
+    + Supervized, Unsupervized, Semi-supervized, reinforcement learning vocabulary
+    + Parametric, non-parametric.
+       + Regression versus loess (local smoothing)
+       + weighted averages - distance, SD of residuals in heteroscedasctic regression.
+
+      + parametric -
+          + can be "biased", structurally miss aspects
+          + can use few points (e.g. a line. Want more, but can use 2.)
+      + non-parametric
+          + lots of flexibility
+	  + lacks interprebility for inference
+	  + may make predicting with fit more computationally complex (not a formula - may need all data, Y for all Xs)
+	  + Subjective in different ways.
+	  + need to determine "smoothness". Cross validation?
+
+"As a general rule, parametric methods will tend to outperform non-parametric approaches when there is a small number of observations per predictor." p123 ISLR
+
+    + What is the sampling distribution of a statistic
+       + What does it really represent conceptually.
+       + How is it connected to the p-value for a hypothesis test.
+       + How do you feel about making a claim about something that is not true 5% of the time, 1 in every 20.  How many claims will you make in your life? What % may be erroneous?
+       
+    + ML Methods and mind map, flow chart.
+
+## Sampling Variability
+
+    + CLT
+    
+    + Bootstrapping - what if formulae and assumptions aren't appropriate.
+
+    + What does p = 0.05 mean to you?
+
+
+## Bootstrap
+
+  Formula for sampling distribution
+    + Applicability of CLT? Accuracy of CLT? Formulae for SEs? Joint distributions?
+  Parametric versus non-parametric
+
+   + Y ~ X
+     + Options - sample....
+        + observations (entire rows)
+        + Y's and separately X's?
+	+ X's and then $Y = X \hat\beta + $ sample of original residuals
+	+ X's and then $Y = X \hat\beta + N(0, sd of original residuals)$
+  
+
+
+## MSE/Bias Variance
+
+training and test MSE   curve
+Generally training MSE monotonically decreasing as function of complexity/model size
+test MSE decreases and then increases.
+  + Bias goes down quickly initially, then variance increases faster.
+
+Generally, test MSE > training MSE.
+
+Same with misclassification.
+
+
+
+Sensitivity  proportion of Y = 1 which are predicted as Y-hat = 1
+Specificity - proport of Y = 0 which are predicted as Y-hat = 0
+   
+### Classification
+    + Simple priors - from the data with no predictors.
+       +  Dumb estimator.  Can we do better.
+    + Bayes classifier (max j P(Y = j| X = x_0))
+       + Don't know P
+       + error rate over all X analogous to irreducible error in prediction case
+
+    + LDA, QDA
+       +  $$\hat{\delta}_k(x) = x \frac{\hat\mu_k}{\hat\sigma^2} − \frac{\hat\mu^2_k}{2\sigma^2}} +log(\pi_k) (4.17)$$
+
+       + Rather than using max discriminator value, can use costs, or change threshold.
+       + Change threshold, get different confusion and error rates.
+          + Decide what makes sense from context
+	  + 
+
+   + Logistic regression
+       + multiple classes rarely have a linear ordering.
+       + binary can be coded as +- 1 or 1 and 0 and use regression.
+          + Same as LDA but from very different formulation (Lik. Ratio. T)
+       + predicted "probablities" won't necessarily be in [0, 1]
+       + logistic function  $$logistic(z) = \frac{e^z}{1+e^z}$$
+          + $p(Y=1|X) = logistic(X\beta)$ - linear in X terms
+       + $$p(Y = 1|X)/(1-P(Y=1|X) = odds  = exp(X\beta)$$
+          + $[0, \infty)$
+	  + > 1 means P(Y=1|X) more likely than opposite.
+	  + So $log(odds) = X\beta$
+       + Type I & II errors.
+       + When the classes are well-separated, the parameter estimates for the logistic regression model are surprisingly unstable.
+       
+    + Confusion matrix, ROC, AUC
+       + ROC - false positive rate (1 - specificity) versus True positive rate (sensitivity)
+          + AUC - area under curve.
+	  + Compares different thresholds/cutoffs
+	  + Can show different models on same ROC
+       + How do these diagnostics vary across samples.
+        
+    + Multiclass classification
+    + kNN
+       + weighted averages, connect to lowess
+       + curse of dimensionality and thinning the # of neighbors that are close, or extending definition of close.
+       + need to scale X's  for fair comparison?
+    + Cross-validation?
+      + 2 purposes- tuning/nuisance parameter estimation, test MSE/Misclassification estimation.
+         + How does this relate to bootstrap?
+      + Can look not just at the total error/misclassification, but which training sets did badly.
+        Is there some pattern.
+      + Get some indication of distribution of test MSE values.
+      + Different sample size, but still useful.
+
+
+      + k-fold CV
+         + Sample size is (k-1)*n of original, so not quite the same training set. Some upward bias of test MSE since training set not as big, but okay.
+	   + Leave-one-out-CV improves this.
+	   + Avoid randomness of repeated randomly selecting train-test split.  Deterministic and all observations in 1 test set.
+	   + Correlation across training sets, however.
+
+         + Need to sample intelligently so training has the relevant observations. And test set also.
+
+       + k-fold versus LOOCV
+          + Less fitting, less computational time.
+	  + bias-variance
+	     + k non LOOCV is slightly more biased.
+	     + but the LOOCV fitted models are more correlated since share observations.
+	       So higher variance.  Fewer effective independent observations.
+     
+	
+    + Classification trees
+       + Look at ISLR's Default data and see that the low income defaulters seem to be a cluster.
+       + Compare kNN and classification trees.
+	  + we are segmenting the X space in both to do local prediction.
+	  + multivariate versus sequential univariate
+              + multivariate distance versus univariate distances
+	      + but tree is taking other variables into account at each split, but aggregated in very different way.	  
+	  + choice of distance metric.
+
+       + Don't pickup interactions easily.
+    + Naive Bayes
+    + Costs, weights, priors.
+    + Ensembles
+    + Bagging
+    + Random forest
+    + Boosting
+       + weighted averages.
+    + Support Vector Machines       
+
+    + Neural networks
+
+
+ISLR - Figure 2.9
+ Why did't the green curve match the black one?
+   + Sampling variability.
+   + Different sample, it would fit differently and be close but in different ways, e.g.,
+      maybe above black curve for x > 80 but below for 60 < x > 80 
+
+    + Overfitting, collinearity, Dimension reduction
+       + Curse of dimensionality
+    + Bias-Variance tradeoff.
+      + Variance here is the variability of our "fitting" procedure and ALL of the fitting procedure.
+         + i.e. what happens with a new data set and we go through the entire selection and fitting procedure.
+      + Decomposition
+       $$E(y - \hat{(f(x_0))})^2 = Var(\epsilon) + Var(\hat{(f(x_0))}) + Bias(\hat{f(x_0)})^2$$
+      + Show MSE curve re. flexibility ISLR Figure 2.9/2.10.
+
+    + Feature engineering.
+    + Regression, logistic regression
+    + Regularization  - Ridge, Lasso, LARS, ElasticNet
+    + Cross-validation - compare models
+    + kernel density estimation or lowess, weighted averages.
+
+    + Clustering, k-means, spectral clustering, MDS.
+
+    + Expectation-Maximization (EM)
+    + Bayesian methods.
+    
+    + Association rules
+    
+    See ~/DSI/ScrapeJobs/HotMethods
+
+
+Model selection
+Stepwise regression
+AIC, BIC, ...
+
+https://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/
+
+
+MindMap image.
+Jixta - WordPress.com
+Machine Learning Algorithms Mindmap
+
+http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html
