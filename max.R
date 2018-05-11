@@ -2,21 +2,21 @@
 n = 50
 
 lambda = .01
-par(mfrow = c(5,5), mar = c(3, 2, 1,0))
+par(mfrow = c(5,5), mar = c(3, 2, 1, 1))
 samples = replicate(25, rexp(n, lambda), simplify = FALSE)
 xx = range(unlist(sapply(samples, range)))
 mx = sapply(samples,max)
 invisible(sapply(samples[order(mx, decreasing = TRUE)], function(x) plot(density(x), main = character(), xlim = xx)))
 
+ylim = range(sapply(samples, function(x) range(density(x)$y)))
+
 invisible(sapply(samples[order(mx, decreasing = TRUE)], function(x) {
-    plot(density(x), main = character(), xlim = xx, col = "blue")
-    curve(dexp(x, lambda), xx[1], xx[2], add = TRUE, col = "red", xlim = xx, lty = 4)
+    plot(density(x), main = character(), xlim = xx, ylim = ylim, col = "blue")
+#    curve(dexp(x, lambda), xx[1], xx[2], add = TRUE, col = "red", xlim = xx, lty = 4)
     }))
 
 
-
 curve(dexp(x, lambda)
-
 
 n = 100
 
