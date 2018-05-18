@@ -100,7 +100,9 @@ Specificity - proport of Y = 0 which are predicted as Y-hat = 0
        + Rather than using max discriminator value, can use costs, or change threshold.
        + Change threshold, get different confusion and error rates.
           + Decide what makes sense from context
-	  + 
+	  +
+       + LDA : density ratio < cost_ratio * prior probability ratio
+                f1/f2 < c(1|2)/c(2|1) p2/p1
 
    + Logistic regression
        + multiple classes rarely have a linear ordering.
@@ -163,16 +165,56 @@ Specificity - proport of Y = 0 which are predicted as Y-hat = 0
 	  + choice of distance metric.
 
        + Don't pickup interactions easily.
+       
+       + Highly unstable/variable.
+	  + Measure an observation with slightly different X and/or Y, may give different splits.
+          + Doesn't mean the predictions are, just the structure of the tree.
+
+       + Not necessarily as good as other methods, but can be improved by bagging.
+
     + Naive Bayes
+      + Spam.
     + Costs, weights, priors.
+      + Major differences in number/% in each class is problematic.
     + Ensembles
+      + Averaging is good and reduces variance.
+      + Increases computation
+      + Decreases interpretability
     + Bagging
+       + Bootstrap aggregation.
+       + Fit many models, each on a bootstrapped data set
+       + Average the results.
+         + For classifiers, vote
+	 + Can use weighted vote where the weights are the confidence in the classification.
+	 + Grow each tree deep (w/o pruning) so decrease bias, but increase variance.
+	 + Averaging across models is way to reduce variance.
+	    + So important to keep clear variance of what - components of classifer, overall classifier.
+       + OOB - out of bag error
+          + For each bootstrap sample and fit, predict the values for the observations left out of the bootstrap sample.
+	     + These are independent of the fit.
+	  + Then average the misfits.
+	    + For an observation index i, look at all the predictions we have for it, i.e. those samples for which it was omitted.  There may not be the same number for each i.
+
+       + Variable importance.
+          + Sum of decrease of Gini index for a given variable across all trees.
+	  
     + Random forest
+       + Bagging but randomly reduce the variables used at each potential split.
+       + Reduces correlation between the trees.
+       + # of predictors used = m approx sqrt(p) , p = number of predictors.
+       + for many correlated X's, chose m small.
+
+       
     + Boosting
        + weighted averages.
+       
     + Support Vector Machines       
 
     + Neural networks
+
+
++ Reduce variance by eliminating positive correlation.
+   + Random forests, LOOCV 
 
 
 ISLR - Figure 2.9
