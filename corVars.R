@@ -4,16 +4,18 @@ Sigma <- matrix(.7, nrow=2, ncol=2) + diag(2)*.3
 N = 100
 rawvars <- as.numeric(mvrnorm(n=N/2, mu=mu, Sigma=Sigma))
 
+# Pairs of values are correlated. Not all values.
 mu.cor = replicate(999, mean(as.numeric(mvrnorm(n=N/2, mu=mu, Sigma=Sigma))))
 mu.ucor = replicate(999, mean(as.numeric(mvrnorm(n=N/2, mu=mu, Sigma=diag(2)))))
 
 
-plot(density(mu.ucor))
+plot(density(mu.ucor), xlim = c(-.5, .5), ylim = c(0, 7.5))
 lines(density(mu.cor), col = "red")
 
 sd(mu.cor)
 sd(mu)  # 1/sqrt(N)
 
+# Negatively correlated pairs of values.
 Sigma2 <- matrix(c(1, -.7, -.7, 1), 2, 2)
 mu.ncor = replicate(999, mean(as.numeric(mvrnorm(n = N/2, mu = mu, Sigma = Sigma2))))
 

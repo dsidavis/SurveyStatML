@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Survey of Statistical Machine Learning</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Survey of Statistical Machine Learning
+
+
+## [https://github.com/dsidavis/SurveyStatML](https://github.com/dsidavis/SurveyStatML)
+
+### Duncan Temple Lang
+
+<div style="clear: both"/>
+
+<!-- <hr width="50%"/> -->
+<img src="http://dsi.ucdavis.edu/images/dsi_banner.png" height="40%"></img>
+
+---
+layout: true
+<img style="float: right" src="http://dsi.ucdavis.edu/images/dsi_brand_logo.png" width="10%"></img>
+
+
+---
+
+# Recap (from last week)
+
++ Parametric & Non-parametric models
+
++ Supervized classification
+
++ Bias-variance tradeoff
+  $$\hbox{Test MSE} = E(y - \hat{f}(x_0))^2 = Var(\epsilon) + Var(\hat{f}(x_0)) + Bias(\hat{f}(x_0))^2$$
+
++ Test Mean Squared Error (MSE)
+
++ Cross-validation
+
++ Bootstrap
+
+---
+
+# Bias Variance Tradeoff
+
++ If increase sample size improves test MSE, what have we reduced
+  + Bias or Variance
+
+--
+
++ If adding more flexibility/terms to model improves test MSE, what have we reduced?
+  + Bias or Variance
+
+---
+
+
+# Classification
+
++ k-Nearest Neighbors
++ Likelihood ratio - LDA, QDA
+   + Multivariate Normality assumption
++ Classification Trees
++ Logistic regression
+   + log odds
++ Ensembles
+   + Bagging
+      + Collection of similar "identical" models fit to bootstrapped samples.
+   + Random Forests
+      + bagging + reduced correlation
+   + Boosting
+      + sequentilly fit weak leaners
+      + focus sequentially on observations we did poorly on
+      + increase weight
+
+---
+
+# Correlated Variables
+
++ Positive correlation adds to overall variance
+  + $$Var(X + Y) = V(X) + V(Y) + 2 Cov(X, Y)$$
+  + So if $Cov(X, Y) > 0$, V(X+Y) is larger than sum of variances.
+
+---
+# Weighted Averages
+
++ reduce variance by weighting inversely to variance
++ $$Var(w_1 X_1 + w_2 X_2) = w_1^2 Var(X_1) + w_2^2 Var(X_2)$$
+     + weights add to 1.
+     + assume independent/uncorrelated so no Cov(X, Y) term.
++ Min $V(Y) = V(\Sigma w_iX_i)$ subject to $\Sigma_i w_i = 1$
++ Lagrange multipliers
+
+
+---
+
++ Bootstrap
+   + Estimate sampling distribution of one or more statistics
+   + Have to resample
+
+
+---
+
+
+# Misclassification
+
++ Confusion matrices
++ Cost of different misclassifications
+   + Incorporate into loss function.
++ ROC
+
+---
+
+# Regression
+
+---
+
+# Linear Regression
+
++ $$Y = \beta_0 + \beta_1 X_1 + ... + \beta_p X_p$$
+
++ Additive in X's
+  + Effect of $X_i$ on Y independent of value of $X_j$
+     + very interpretable - change in Y doesn't depend on values of other variables
+     + interaction
+
++ Linear in $X_i$
+  + Change in Y for one unit change in $X_i$ same at all values of $X_i$.
+
+---
+
+# How good is a fit?
+
++ Measures?
+  + $R^2$
+  + RSS
+  + RSE
+--
+
++ $RSE = \sqrt{RSS/(n-p-1)}$
+  + Can go up as we add a variable
+
+
+---
+
+# Problems with Regression
+
++ Heteroscedascity
++ Collinearity in the X's
++ Outliers
++ Leverage
+
+
+---
+
+# Collinearity
+
+
+
+---
+
+# Model Selection
+
++ $$ V(Y)  = \beta_1^2 V(X_1) + ... + \beta_p^ V(X_2)$$
+
++ More terms, more variance if not explaining Y.
+
++ How do we determine which X's to include? exclude?
+
++ Model selection
+
+---
+
+# Model Selection Criteria
+
++ Mallow's Cp $(RSS + 2 p \sigma^2)/n$
++ Akaike's Information Criterion -  $(RSS + 2 p \sigma^2)/n\sigma^2$
++ Bayesian Information Criterion - $(RSS + \log(n) p \sigma^2)/n\sigma^2$
++ Adjusterd $R^2$ = 1 - (RSS/(n-p-1)) / TSS/(n-1)$
+
+
++ Test MSE (!)
+
+--
+
++ Cross validation.    
+
+---
+
+# Ridge Regression
+
++ Addresses collinearity issues
++ Penalized regression
+  + $$RSS + $\lambda \sigma_{i=1}^p \beta_i^2$$
+
+
++ Accept some bias to reduce variance
+
++ Shrink coefficients towards 0 by scaling.
+
++ Coefficient estimates are a function of $\lambda$.
+  + As $\lambda$ increases, $\beta_i$ decrease generally.
+
++ How to determine $\lambda$.
+
+---
+
+# Lasso Regression
+
+
++ Similar motivation to ridge - penalty on the coefficients
+
++ Different penalty formulation
+  + $$RSS + $\lambda \sigma_{i=1}^p \vert|\beta_i \vert| $$
+
+
+
+---
+
+# Lasso as Variable Selection
+
++ The lasso leads to shrinking coefficients by
+   + shifting (subtracting a constant), and
+   + setting small values to 0, identically (not close to 0)
+
++ So some variables may be omitted from the model.
+
+
+
+---
+
+# ElasticNet
+
++ Use both forms of penalty in same loss function.
+   + $$ RSS + \lamdab_1 \Sigma \vert| \beta_i \vert|$ + \lambda_2 \Sigma \beta_i^2 $$ 
+
+<!--
+
+  Classification 
+     Score & Threshold
+     Confusion matrix
+     ROC
+
+     Bagging
+     Boosting
+
+     Support vector machine
+       subject to budget.
+     
+     
+     Regression
+     Not just linear -
+     additive/linear in coefficients,
+     Can have non-linear variables
+
+
+     Assumes global structure.
+
+
+     Bias-Variance tradeoff, as usual.
+       flexibility/overfitting/adapting to sample
+
+     
+     Model selection
+        + can't use R^2 or MSE on the training set.
+        + Mallow's Cp, AIC, BIC, - penalizing the complexity of the model
+        + cross validation
+
+     Ridge regression
+       +  RSS + $\lambda \sigma_{i=1}^p \beta_i^2$
+       + Note does not include \beta_0
+     Lasso
+            +  RSS + $\lambda \sigma_{i=1}^p \vert| \beta_i \vert|$
+       - same norm as quantile regression
+     
+
+      Same as constraint
+
+     Min RSS s.t  $\lambda \sigma_{i=1}^p \vert| \beta_i \vert| < s$
+
+     What does this look like?
+     Beta space/axes
+
+     Circle, square
+     Intersection with
+
+
+     Step functions
+     Splines,
+     Local regression
+       non-parametric
+
+     GAMs
+    
+   -->
+
+
+
+
+
+---
+
+# Unsupervized Learning
+
++ Very different goals than supervized learning.
+
++ Given covariates $X_1$, $X_2$, ..., $X_p$
+   + No response $Y$
+
++ Common Goals
+   + Clustering
+     + k-Means (not k-Nearest Neighbors)
+     + Agglomerative clustering
+        + linkage: complete, average, single, centroid
+     + Spectral
+   + Dimension Reduction
+     + Principal Components Analysis (PCA)
+     + SVD
+     + Factor analysis (latent variables)
+
+     
+
+
+---
+
+# Clustering
+
++ Distance metric
+
+
++ Scale variables ?
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] } });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML">
+    </script>
+  </body>
+</html>

@@ -62,25 +62,25 @@ layout: true
 
 + General concepts of ML, Data Analysis, Vocabulary
 + Refresher about sampling distribution.
-+ Binary Classification
++ Classification
 
-<!--
-     Why classification.
+--
+##     Why classification.
      + Easier to understand - more heuristic.
      + Prediction/Classification rather than inference.
-     + Some nice modern(ish) concepts
-     + Don't teach as much as non-parametric classification/prediction methods in class, relative to
-        regression.
-
+     + Some nice general concepts
+     + Some modern(ish) concepts
+     + Don't teach as much as non-parametric classification/prediction methods in class, relative to  regression.
      + Regression, regularization, etc. somewhat/slightly more complex
+
+<!--
      + We won't go to deep learning today, but figure out whether
         it would be good for next week.
-     
-   -->
+-->
 
 ---
 # Garbage In, Garbage Out
-## If you mislead machine learning, it will mislead you.
+### If you mislead machine learning, it will mislead you.
 
 + Stat Machine Learning Methods are important, but are just one part of the data pipeline
 
@@ -90,21 +90,22 @@ layout: true
 
 + Sample incorrectly, inference about target population is *mostly flawed/unreliable*.
    + Many people don't consider issues of sampling bias/found data.
-   + Sampling bias  ≠  Estimation bias.
+   + Sampling bias ≠ Estimation bias.
 
-+ Mess up data acquisition systematically, **inference is broken**.
-
++ Mess up data acquisition systematically, *inference is broken*.
 + Clean data poorly, inference is *often challenged*.
 
-## The data pipeline can fail at *any* stage.
+### The data pipeline can fail at *any* stage.
 
 ---
 
-# Framing the Learning Problem
-## E.g. SPAM Email
+# Example: SPAM Email
 
 + Collect representative emails
-  + Not my email!
+ + Not my email - unless personalized filter
+ + Historical data - spam changing over time.
+
++ Get data from server, mbox, ...
 
 + Read their the metadata, text, attachments.
 
@@ -112,6 +113,11 @@ layout: true
 
 + How much do we care about missing emails that are relevant to me?
 + How much spam can I deal with it?
++ What are the costs of Type I and II errors.
+
++ Evaluate different approaches.
+
++ Feature engineering
 
 
 
@@ -151,14 +157,16 @@ layout: true
 # Methods versus Data Analysis
 
 + Understandable focus on methods.
+   + What is taught in classes.
+   + If they work adequately, not much thought needed.
 
 + Data exploration, feature engineering critical.
 
 + Important to define loss function for "real" question.
+  + Loss function "defines" the method.
+  + Generic methods (mostly) define the loss function.
 
 ---
-
-
 # Purpose of Machine Learning
 
 ## Prediction versus Classification versus Estimation
@@ -186,18 +194,23 @@ layout: true
 
 + Unsupervized - don't have response, only predictors
 
-+XXX
++ Semi-supervized -
+   + have predictors for all observations
+   + responses for some.
+   + Can we use the unlabelled observations ?
 
 ---
 
 # Parametric, non-Parametric.
 
-+ Distributional assumptions about variables versus None
-   + Normal, Exponential versus Ranks, Permutations, ...
++ 2 types of parametrics
 
-+ Assume functional form (e.g. linear) verus No functional form.
+  + Distributional assumptions about variables versus None
+      + Normal, Exponential versus Ranks, Permutations, ...
 
-
+  + Assume functional form (e.g. linear) verus no functional form.
+    + Linear model
+    + lowess smoothing
 
 ---
 
@@ -205,6 +218,25 @@ layout: true
 
 + Characterize the following panels.
 
+<a href="CompareDistributions.png"><img src="CompareDistributions.png" width="60%"></a>
+
+---
+
+--
++ Are these densities the same?
+
+--
++ How can you tell?
+
+--
++ What makes them different?
+
+<!-- sampling variability.   A very small bit of bias in the density estimation? -->
+
+---
+# With a Reference Distribution
+
+<a href="CompareDistributionsExp.png"><img src="CompareDistributionsExp.png" width="60%"></a>
 
 ---
 
@@ -217,14 +249,20 @@ layout: true
 + Estimate population parameter $\hat\theta_n = T(x_1, ..., x_n)$  
 
 + Interested in ___Sampling Distribution of Estimator___
-  + Distribution of  $\hat\theta_n$ across different samples of same size
 
+---
+
+## What is the sampling distribution
+
++ Distribution of  $\hat\theta_n$ across different samples of same size
++ From this, can compute SE, quantiles, confidence intervals. 
++ May be a joint distribution for two or more statistics.
 
 ---
 # Estimating 95th Quantile
 
 + Sampling distribution of .95th quantile?
-+  of maximum?
++ of maximum of sample?
 
 ---
 
@@ -249,17 +287,257 @@ layout: true
 # Bootstrap
 
 + Generate new samples based on our original sample
+  + Same sample size
   + Parametric versus Non-parametric
 
-+ Create $x_1^*, ..., x_n^*$ from sample
-  + 2 ways
++ Create $X^* = {x_1^*, ..., x_n^*}$ from sample
+  + Non-parametric:  sample n values from $x_1, ..., x_n$  **with replacement**
 
-+ 
+  + Parametric: Assume we know distributional form of X, e.g., exponential
+    + Generate n values from Exponential($\hat{\lambda}$), i.e. Exponential($\bar{X}$)
+    + Estimate parameter from original sample.
+    + Use that distribution to generate $x_1^*, ..., x_n^*$
 
++ Compute statistic(s) from $X^*$ - $T(X^*)$
+
++ Repeat B times
+
++ Empirical distribution is estimate of sampling distribution.
+
+
+---
+# Bootstrap Sampling
+
++ Key concept
+    + Relationship between population and original sample is "same" as relationship between original sample and each bootstrap sample
+
++ Bootstrap sampling needs to mimic getting a different original sample
+   + Depends on what you know/believe.
+
++ Example above simple
+   + random sample, independent and identically distributed $x^*_i$
+
++ More complicated when 
+   + stratified, clustered sample
+   + correlated in time or space by design
 
 ---
 
 # Classification
+
+---
+
++ Classifying new observations into one of g classes/labels
+
++ Given $X_1, ..., X_p$ predictors
+
++ May know $\pi_1, ..., \pi_g$ - the proportion of each class in the population.
+
++ Sample of n observations Y<sub>i</sub>, X<sub>i1</sub>, Y<sub>i2</sub>, Y<sub>ip</sub>
+
+
+
+---
+
++ Find ways to separate observations from different groups.
+
++ Like clustering, want observations in same class to be more like each other and more different than observations in other classes.
+
+<a href="Cloud2.png"><img src="Cloud2.png" width="85%"></a>
+
+
+---
+
++ But perhaps a class has bimodal distribution
+
+<a href="Cloud3.png"><img src="Cloud3.png" width="85%"></a>
+
+---
+
+<a href="Cloud4.png"><img src="Cloud4.png" width="85%"></a>
+
+---
+
+
+# k Nearest Neighbors
+
+
++ Premise: Observations that are close together in X/Covariate space will be similar in Y
+
++ "close", "similar"
+  + Need a measure of distance.
+
+
++ Classifier
+   + Given a labeled training set $Y_i$, x<sub>i1</sub>, x<sub>i2</sub>, ..., x<sub>ip</sub>, i = 1, ..., n.
+   + For a given distance measure, and number k, say k = 3
+   + Predict the group of a new observation $x_1, x_2, ..., x_p$ with
+     + Find the k = 3 closest training points to new observation
+     + Find the most common class of those k "neighbors" 
+
+---
+
+# How does choice of k influence classifier?
+
++  k = 1
+
+--
+
++ k = n/2
+
+--
+
++ k = n
+
+
+---
+
+# Bias-Variance Tradeoff
+
+$$\hbox{Test MSE} = E(y - \hat{f}(x_0))^2 = Var(\epsilon) + Var(\hat{f}(x_0)) + Bias(\hat{f}(x_0))^2$$
+
++ Bias = $f(x_0) - \hat{f}(x_0)$
+   + structural difference between truth and our model.
+   + Doesn't get better with more data.
+
++ $Var(\hat{f})$ - how much does $\hat{f}$ change across different samples.
+   + Sampling variability of the statistic/model.
+   + Should decrease with larger sample size.
+
++ $Var(\epsilon)$ - Irreducible, inherent randomness for each observation.
+  +  Can't get prediction below this (without changing this itself).
+
+
+<!-- How do we reduce variance?  Average "observations".  Suggests ensembles.
+   Increase the number
+   -->
+
+
+---
+
+# Measuring Fit
+
+## Confusion Matrix
+
+
++ For each group, count the number of observations from that group classified into groups 1, 2, ..., g.
+
+<table>
+    <tr><td/><td>Predicted</td></tr>
+<tr>
+    <td>Truth</td>
+    <td>
+<table border="1">
+    <tr><td>1</td> <td>2</td> <td>....</td> <td>g</td></tr>
+    <tr><td>1</td> <td></td><td></td><td></td></tr>
+    <tr><td>2</td> <td></td><td></td><td></td></tr>
+    <tr><td>...</td><td></td><td></td><td></td> </tr>
+    <tr><td>g</td><td></td><td></td><td></td></tr>
+</table></td>
+</tr>
+</table>
+
++ Want diagonal values to be large.
+
++ Ideally, 0's off diagonal.
+
+
+---
+
+# kNN Details
+
+
++ How to determine k ?
++ Distance measure?
+   + Standardize or not?
+   + How to deal with categorical data?
++ Should we weight the votes of the k neighbors?
+
+---
+# Determine k, distance, ...
+## Cross-validation
+
++ 2 purposes-
+    + tuning/nuisance parameter estimation
+    + estimation of  test MSE/Misclassification
+<!--         + How does this relate to bootstrap? -->
+
++ Concept: Compare 2 or more models based on how well they do on new test data (not training data).
+
++ We don't necessarily have test data.
+   + Ideally we do.
+   + Sample =  Training data $\cup$ Validation data  $\cup$ Final Test data
+
+---
+# Cross-Validation
+
++ Split training data into  - training + test
++ Fit model on training data - $G_\hbox{Train}(x)$
++ Classify test data with $G_\hbox{Train}(x)$
+
+--
+
++ What's wrong with this?
+
+--
+
++ Results depend on which observations are in test set.
+
+--
+
++ Is this Bias or Variance?
+
+--
+
++ Want every observation in training set to be in exactly one test set.
+
+
+---
+# Leave-One-Out CV
+
++ One approach
+   + test set is one observation, training is everything else
+   + new training set has n - 1 observations.
+
++ Good or bad?
+
+---
+
+# K-fold CV
+
++ Sample size is (k-1)*n of original, so not quite the same training set. Some upward bias of test MSE since training set not as big, but okay.
+   + k = 5, 10 common.
+ 
++ Leave-one-out-CV improves this.
+	   + Avoid randomness of repeated randomly selecting train-test split.  Deterministic and all observations in 1 test set.
+	   + Correlation across training sets, however.
+
++ k-fold versus LOOCV
+
+--
+
+  + Less fitting, less computational time.
+  + bias-variance
+     + k-fold is slightly more biased that LOOCV
+     + but the LOOCV fitted models are more correlated since share observations.
+         + So higher variance.
+         + Fewer effective independent observations.
+         + See <a href="corVars.R">corVars.R</a>
+    
+
+---
+# Cross Validation
+
++ Can do EDA on cross validation.
++ look not just at the total error/misclassification, but which training sets did badly.
+    + Is there some pattern, outliers  due to unusual test set.
+
++ Need to sample intelligently, mimicing the original sampling scheme/design.
+
+<!--
++ Get some indication of distribution of test MSE values.
++ Different sample size, but still useful.
+   -->
 
 ---
 # Linear Discriminant Analysis
@@ -354,52 +632,159 @@ layout: true
 
 
 ---
-# Linear Regression
-
-+ Ordinary Least Squares
-+ Maximum Likelihood
-
-+ Why is X1 + X1^2 linear?
-
-+ What is the loss function?
-
-+ 
-
-
-
----
-
-# Bias-Variance Tradeoff
-
-$$\hbox{Test MSE} = E(y - \hat{f}(x_0))^2 = Var(\epsilon) + Var(\hat{f}(x_0)) + Bias(\hat{f}(x_0))^2$$
-
-+ Bias = $f(x_0) - \hat{f}(x_0)$
-   + structural difference between truth and our model.
-   + Doesn't get better with more data.
-
-+ $Var(\hat{f})$ - how much does $\hat{f}$ change across different samples.
-   + Sampling variability of the statistic/model.
-   + Should decrease with larger sample size.
-
-+ $Var(\epsilon)$ - Irreducible, inherent randomness for each observation.
-  +  Can't get prediction below this (without changing this itself).
-
-
-<!-- How do we reduce variance?  Average "observations".  Suggests ensembles.
-   Increase the number
-   -->
----
 
 # Classification & Regression Trees
+
++ Fit a simple "stump"
+   + Best variable that separates the Ys
+   + Find best variable and best point at which it splits.
+
++ Divide data based on split
+   + classify within each group based on majority vote
+
++ Repeat on each of the 2 divisions of the data
+   + Recursively build a tree.
+
++ Measures of fit
+  + misclassification rate $(1 - max_k (p_k))$
+  + Gini $-\Sigma_k p_k (1-p_k)$
+  + entropy $-\Sigma_k p_k log(p_k)$
+
+
++ Greedy
 
 + Parametric or Non-parametric?
 
 
 
+---
+# Ensembles
+
+---
+Bagging
+
++ General approach
+  + Talk about it wrt. classification trees.
+
++ Trees are "unstable"
+
+---
+# Random Forest
+
++ Use Bagging
+  + generate new bootstrap sample
+  + fit a tree
+
++ But when deciding each split/branch in the tree,
+   + use a random subset of covariates
+
++ Say p covariates, $X_1, ..., X_p$
+  + Use, say, $m = sqrt(p)$ covariates
+  + Select at random, and find best split.
+  + Different set of candidate covariates at each split!
 
 ---
 
-# Naieve Bayes
+# Why does Random Forest work?
+
+--
+
++ The trees would ordinarily be  correlated.
++ Different data, but same predictors.
++ Dominant covariates (ones that are good predictors) will be used most of the time.
++ Remove these at random allows them to be used, but not all the time.
++ Different trees will be less correlated.
+
+---
+# Boosting
+
++ An ensemble method
+
++ Concept:
+   + Using a classification model 
+   + Fit the model to the training data
+   + For the observations we misclassify, increase their relative weights.
+   + Fit the classifier again with the new weights to create the next model
+   + Repeat M times, creating M different classifiers
+
+   + For a new test observation, classify it with each of the M classifiers.
+     +  Combine votes, using weights for the votes
+     +  Increased weight for classifier that was more accurate.
+
+
++ Each successive model uses information from the previous fitted model
+  + Focus successively on hard to classify observations.
+
++ Weights on the hard to fit observations increase, but the overall accuracy of the resulting classifier decreases.
+   + That classifier contributes something to be able to adapt to the hard to predict observations, areas where the original classifier didn't do well.
+   + But does not contribute as much in overall vote as the initial classifier as it isn't as accurate overall.
+
++ Relies on the basic classifier at each step being better than guessing, but only just.
+   + error rate < 50%
+
++ Converts weak learner to a strong learner
+
++ Reduces bias and variance.
+
+---
+
+# Boosting
+
+### AdaBoost Algorithm/Steps
+
++ Set weights for each observation $w_i = 1/N, i = 1, 2, ..., N$
+
++ Repeat M times  (number of times we boost)
+  + Fit classifier $G_m(x)$ to the training data using current weights $w_i$
+  + Compute error rate for $G_m(x)$
+$$  err_m = \frac{\Sigma_i^N  w_i I(y_i \ne G_m(x_i))}{\Sigma_i^N w_i}$$
+
+  + Compute $\alpha_m = log( (1 - err_m)/err_m )
+     
+  +  Update weights for next iteration with
+$$ w_i = w_i  exp( \alpha_m I(y_i \ne G_m(x_i))),  i = 1, 2, ..., N  $$
+
+      + only change weights for observations we got wrong.
+
+  + Back to next iteration
+
++ Overall classifier
+   $$G(x) = sign ( \Sigma_m^M \alpha_m G_m(x) )$$
+
+
+---
+
+# Boosting
+
+## Other Conceptual Frameworks
+
++ After fitting a model, fit a model to the residuals.
+
++ Fit model $Y = G_1(x) + \hbox{residual}$.
++ Fit second model $\hbox{residual} = G_2(x) + \hbox{residual}_2$
++ Fit third model $\hbox{residual}_2 = G_2(x) + \hbox{residual}_3$
+
++ Now combine
+   $$ Y = \alpha_1 G_1(x) + \alpha_2 G_2(x) + \alpha_3 G_3(x) $$
+
+
++ Shrink the residuals each step.
+
+
++ Boosting can overfit.
+
+
+---
+
+# Support Vector Machine - SVM
+
++ Maximal margin classifier - separable case
++ Non-separable case.
+
+
+---
+
+# Naïve Bayes
 
 + Consider classifying an email as HAM/SPAM
 
@@ -426,6 +811,39 @@ that help us to predict/discriminte between SPAM and HAM.
   real or specific/overfitting to the current sample.
 
 
+---
+
+# Bayes Theorem
+
++ $$P(\hbox{message is spam} |\hbox{message content: "Are your taxes too high?"})$$
+
++ Bayes Theorem
+$$P(\hbox{message is spam} | \hbox{message content}) = \frac{P(\hbox{message content} | \hbox{spam})P(\hbox{spam})}{P(\hbox{message content})}$$
+
+
++ We care about the ratio of the probabilities $P(spam|message content)/$P(not spam|message content)$
+  + So denominator term common to both cancels.
+  + So looking at
+$$\frac{P(\hbox{message content} | \hbox{spam})P(\hbox{spam})}{\frac{P(\hbox{message content} | \hbox{NOT spam})P(\hbox{NOT spam})}$$
+
++ We have sample estimates for $P(\hbox{spam})$ and $P(\hbox{NOT spam})$
+  + Just sample proportions.
+
+---
+# Naive Bayes
+
++ Problem is $P(\hbox{message content} | \hbox{spam})$ and for NOT spam.
+
++ Looking at joint distribution of words in email
+  + Order of words important.
+
++ Simplifying assumption: presence or absence of a word  is independent of other words.
+  + $P("high" in email | "taxes" in email AND is spam ) = P("high" in email | is spam)$;
+  + $P("high" not in email |"taxes" in email AND is spam) = P("high" in email | is spam)$
+
++ So
+$$P(message content| spam) = P("apple" not in email | spam) P("bob" not in email | spam)...P(high in email| spam) P(hit not in email) ... P(taxes in email| spam) ...$$
+  + Note we need to have a term for all of the words.
 
 ---
 
@@ -438,11 +856,7 @@ that help us to predict/discriminte between SPAM and HAM.
 
 
 
-<!--
-
-
-# Reinforcement Learning
--->
+<!-- # Reinforcement Learning -->
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
