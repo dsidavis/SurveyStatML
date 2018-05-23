@@ -1,0 +1,5 @@
+
+1. Sort out the row numbers on the table when we restore the results and then add new ones.
+   Need to make them unique. Otherwise can delete the wrong one.yes
+   s
+
